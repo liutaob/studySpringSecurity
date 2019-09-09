@@ -4,7 +4,7 @@
 
 [github示例代码](https://github.com/liutaob/studySpringSecurity)
 
-~~由于B站up主未提供资料，个人整理~~
+~~由于B站up主未提供资料，个人整理,主要看代码理解~~
 
 ## 一、SpringSecurity入门开发
 
@@ -12,16 +12,16 @@
 
 **思维导图**
 
-![思维导图一](G:\BaiduNetdiskDownload\security\p1.png)
+![思维导图一](image/p1.png)
 
 ###1.SpringSecurity框架简介
 
-![框架简介](G:\BaiduNetdiskDownload\security\p2.png)
+![框架简介](image/p2.png)
 
 ### 2.security和shiro对比
 
-![相同点](G:\BaiduNetdiskDownload\security\p3.png) 
-![不同点](G:\BaiduNetdiskDownload\security\p4.png) 
+![相同点](image/p3.png) 
+![不同点](image/p4.png) 
 
 ### 3.搭建工程
 
@@ -33,7 +33,7 @@
 
 进入springmvc之前原理过滤器链里各种过滤器 断点测试
 
-![原理](G:\BaiduNetdiskDownload\security\p5.png)
+![原理](image/p5.png)
 
 ### 7.自定义登录页面、登录请求
 
@@ -41,7 +41,7 @@
 
 ## 二、SpringSecurity+SSM权限管理
 
-![思维导图二](G:\BaiduNetdiskDownload\security\p6.png)
+![思维导图二](image/p6.png)
 
 ### 1.数据库设计
 
