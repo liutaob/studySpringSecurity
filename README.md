@@ -14,7 +14,7 @@
 
 ![思维导图一](image/p1.png)
 
-###1.SpringSecurity框架简介
+### 1.SpringSecurity框架简介
 
 ![框架简介](image/p2.png)
 
