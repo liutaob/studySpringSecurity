@@ -47,7 +47,7 @@
 
 [数据库sql文件](sql.md)
 
-###2.搭建SSM+Security
+### 2.搭建SSM+Security
 
 ssm+过滤器链即可
 
