@@ -63,4 +63,5 @@ ssm+过滤器链即可
 
 执行流程、代码spring、ssm、springboot、ncore
 
-**遇到的问题：**启动就创建表？
+**遇到的问题：**token持久化时启动就创建表？
+参考该博客https://www.cnblogs.com/xuwenjin/p/9933218.html

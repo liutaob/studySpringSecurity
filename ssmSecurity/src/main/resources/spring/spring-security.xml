@@ -40,7 +40,8 @@
         <security:csrf disabled="true"/>
         <!-- 未授权提示页面 URL-->
         <security:access-denied-handler error-page="/error"/>
-
+        <!--        开启注销 清除session-->
+        <security:logout logout-success-url="/"/>
         <!--    加上remember-me功能 token-validity-seconds 过期时间   -->
         <security:remember-me token-repository-ref="jdbcTokenRepository" token-validity-seconds="3600" />
 
@@ -63,6 +64,7 @@
         <property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
     </bean>
 
+<!--    记住我 JdbcTokenRepositoryImpl将Token持久化到数据库-->
     <bean id="jdbcTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
         <property name="dataSource" ref="dataSource" />
         <property name="createTableOnStartup" value="true" />

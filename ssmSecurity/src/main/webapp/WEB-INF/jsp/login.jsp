@@ -35,7 +35,8 @@
             $.post("${pageContext.request.contextPath}/userLogin", $("#loginForm").serialize(), function (data) {
                 debugger;
                 if (data.success) {
-                    window.location.href = "${pageContext.request.contextPath}"//首页
+                    <%--window.location.href = "${pageContext.request.contextPath}"//首页--%>
+                    window.location.href = "/"//首页
                 } else {
                     // 登录不成功将错误块显示
                     $("#errorShow").css("display","block");
