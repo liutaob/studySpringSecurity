@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 下面的一坨是一些XML的一些规范，我是这么理解的 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:beans="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+       	 http://www.springframework.org/schema/security
+         http://www.springframework.org/schema/security/spring-security.xsd
+         http://www.springframework.org/schema/context
+         http://www.springframework.org/schema/context/spring-context.xsd
+         http://www.springframework.org/schema/tx
+     	 http://www.springframework.org/schema/tx/spring-tx.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop.xsd">
+    <!-- 下面是不需要进行认证的资源 -->
+    <!-- 因为要使用自己的权限验证规则，下面是配置一些自定义的Handler -->
+    <security:http>
+
+
+        <security:intercept-url pattern="/" access="permitAll()"/>
+        <security:intercept-url pattern="/login" access="permitAll()"/>
+        <security:intercept-url pattern="/code/image" access="permitAll()"/>
+        <security:intercept-url pattern="/js/**" access="permitAll()"/>
+        <security:intercept-url pattern="/product/add" access="hasAuthority('pms:product:create')"/>
+        <security:intercept-url pattern="/product/update" access="hasAuthority('pms:product:update')"/>
+        <security:intercept-url pattern="/product/delete" access="hasAuthority('pms:product:delete')"/>
+        <security:intercept-url pattern="/product/list" access="hasAuthority('pms:product:read')"/>
+<!--        所有的请求都要认证，需要用到的需在上面放行-->
+        <security:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+        <!-- 自定义拦截器  验证码-->
+        <security:custom-filter ref="validateCodeFilter" before="FORM_LOGIN_FILTER"/>
+        <!-- from login 配置-->
+        <security:form-login login-page="/login" login-processing-url="/userLogin" default-target-url="/"
+                             authentication-success-handler-ref="myAuthenticationSuccessHandler"
+                             authentication-failure-handler-ref="myAuthenticationFailureHandler"/>
+        <security:csrf disabled="true"/>
+        <!-- 未授权提示页面 URL-->
+        <security:access-denied-handler error-page="/error"/>
+
+        <!--    加上remember-me功能 token-validity-seconds 过期时间   -->
+        <security:remember-me token-repository-ref="jdbcTokenRepository" token-validity-seconds="3600" />
+
+
+    </security:http>
+    <!-- 认证管理器，使用自定义的UserDetailsService -->
+    <security:authentication-manager>
+        <security:authentication-provider user-service-ref="myUserDetailService">
+            <security:password-encoder ref="bCryptPasswordEncoder"/>
+
+        </security:authentication-provider>
+    </security:authentication-manager>
+    <bean name="bCryptPasswordEncoder"
+          class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <bean id="myUserDetailService" class="top.wycfight.config.MyUserDetailService"/>
+
+    <bean id="myAuthenticationSuccessHandler" class="top.wycfight.component.MyAuthenticationSuccessHandler"/>
+    <bean id="myAuthenticationFailureHandler" class="top.wycfight.component.MyAuthenticationFailureHandler"/>
+    <bean id="validateCodeFilter" class="top.wycfight.validate.code.ValidateCodeFilter">
+        <property name="authenticationFailureHandler" ref="myAuthenticationFailureHandler"/>
+    </bean>
+
+    <bean id="jdbcTokenRepository" class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+        <property name="dataSource" ref="dataSource" />
+        <property name="createTableOnStartup" value="true" />
+
+    </bean>
+</beans>

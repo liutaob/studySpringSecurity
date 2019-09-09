@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 下面的一坨是一些XML的一些规范，我是这么理解的 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans.xsd
+       	 http://www.springframework.org/schema/security
+         http://www.springframework.org/schema/security/spring-security.xsd">
+<!--    security:http过滤器链的配置，1）需要拦截什么资源2)什么资源什么权限3）定义认证方式HttpBasic、formLogin 4）自定义登录页面，地址，错误处理方式-->
+    <!-- 下面是不需要进行认证的资源 -->
+    <!-- 因为要使用自己的权限验证规则，下面是配置一些自定义的Handler -->
+    <security:http>
+        <!--isFullyAuthenticated 该资源需要认证才能访问-->
+        <!-- isAnonymous：只有匿名用户可以访问 -->
+        <!--permitAll 都可以进行访问 -->
+        <security:intercept-url pattern="/" access="permitAll()"/>
+        <security:intercept-url pattern="/login" access="permitAll()"/>
+        <security:intercept-url pattern="/product/add" access="hasRole('ROLE_USER')"/>
+        <security:intercept-url pattern="/product/update" access="hasRole('ROLE_USER')"/>
+        <security:intercept-url pattern="/product/delete" access="hasRole('ROLE_ADMIN')"/>
+        <security:intercept-url pattern="/product/list" access="hasRole('ROLE_ADMIN')"/>
+        <security:intercept-url pattern="/**" access="isFullyAuthenticated()"/>
+<!--        HttpBasic认证-->
+<!--        <security:http-basic/>-->
+        <!--  使用 formLogin进行登录 这里login-page Get不变 若未指定处理表单则 GET/POST共用 注意放开此路径权限否则重定向次数过多-->
+        <security:form-login login-page="/login" login-processing-url="/userLogin" default-target-url="/"
+                             authentication-success-handler-ref="myAuthenticationSuccessHandler"
+                             authentication-failure-handler-ref="myAuthenticationFailureHandler"/>
+<!--        允许跨站请求-->
+        <security:csrf disabled="true"/>
+<!--        开启记住我-->
+        <security:remember-me remember-me-parameter="remember"/>
+        <!-- 未授权提示页面 URL-->
+        <security:access-denied-handler error-page="/error"/>
+<!--        开启注销 清除session-->
+        <security:logout logout-success-url="/"/>
+
+    </security:http>
+    <!-- 认证管理器，默认内存中、使用自定义的UserDetailsService -->
+    <security:authentication-manager>
+<!--       1 写死-->
+        <security:authentication-provider>
+            <security:user-service>
+                <security:user name="admin" authorities="ROLE_ADMIN" password="1234"/>
+            </security:user-service>
+            <security:password-encoder ref="myPasswordEncoder"></security:password-encoder>
+        </security:authentication-provider>
+<!--        2使用自定义的UserDetailsService-->
+<!--        <security:authentication-provider user-service-ref="myUserDetailsService">-->
+<!--            <security:password-encoder ref="myPasswordEncoder"/>-->
+<!--        </security:authentication-provider>-->
+    </security:authentication-manager>
+
+<!--    <bean id="myUserDetailsService" class="top.wycfight.config.MyUserDetailsService"/>-->
+
+    <!--解决 java.lang.IllegalArgumentException: There is no PasswordEncoder mapped for t-->
+    <bean name="myPasswordEncoder" class="top.wycfight.config.MyPasswordEncoder"/>
+
+    <bean id="myAuthenticationFailureHandler" class="top.wycfight.config.MyAuthenticationFailureHandler"/>
+    <bean id="myAuthenticationSuccessHandler" class="top.wycfight.config.MyAuthenticationSuccessHandler"/>
+
+</beans>
